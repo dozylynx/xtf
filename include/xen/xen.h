@@ -66,6 +66,15 @@
 typedef uint16_t domid_t;
 #endif
 
+/* Define a variable length array (depends on compiler). */
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#define XEN_FLEX_ARRAY_DIM
+#elif defined(__GNUC__)
+#define XEN_FLEX_ARRAY_DIM  0
+#else
+#define XEN_FLEX_ARRAY_DIM  1 /* variable size */
+#endif
+
 #define DOMID_FIRST_RESERVED (0x7ff0U)
 #define DOMID_SELF (0x7ff0U)
 
