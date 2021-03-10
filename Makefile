@@ -19,7 +19,7 @@ endif
 xtftestdir := $(xtfdir)/tests
 
 # Supported architectures
-SUPPORTED_ARCH := x86
+SUPPORTED_ARCH := x86 arm64 arm32
 # Default architecture
 ARCH ?= x86
 # Check if specified architecture is supported
@@ -41,6 +41,10 @@ OBJCOPY         := $(CROSS_COMPILE)objcopy
 PYTHON          := python
 
 export CC CPP INSTALL INSTALL_DATA INSTALL_DIR INSTALL_PROGRAM OBJCOPY PYTHON
+
+# Some tests are architecture specific. In this case we can have a list of tests
+# supported by a given architecture in $(ROOT)/build/$(ARCH)/arch-tests.mk
+-include $(ROOT)/build/$(ARCH)/arch-tests.mk
 
 # By default enable all the tests
 TESTS ?= $(wildcard tests/*)

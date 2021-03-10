@@ -1,0 +1,8 @@
+# Architecture specific configuration for arm32
+
+ARCH_PATH := $(ROOT)/arch/arm
+ALL_ENVIRONMENTS := arm32
+
+arm32_arch   := arm32
+arm32_guest  := arm32
+defcfg-arm32 := $(ROOT)/config/default-arm.cfg.in
