@@ -26,6 +26,12 @@
         (type)0;                                \
     })
 
+#define _hypercall_5(type, hcall, a1, a2, a3, a4, a5)  \
+    ({                                                 \
+        UNIMPLEMENTED();                               \
+        (type)0;                                       \
+    })
+
 #endif /* XTF_ARM_HYPERCALL_H */
 
 /*

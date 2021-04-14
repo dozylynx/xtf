@@ -32,6 +32,7 @@
 # define HYPERCALL1 _hypercall_1
 # define HYPERCALL2 _hypercall_2
 # define HYPERCALL3 _hypercall_3
+# define HYPERCALL5 _hypercall_5
 
 #else
 # error Bad architecture for hypercalls
