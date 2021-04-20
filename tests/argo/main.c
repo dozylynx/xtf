@@ -21,12 +21,18 @@ const char test_title[] = "Argo hypercall test";
 static uint8_t ring_buffer[32 * PAGE_SIZE] __page_aligned_bss;
 #define TEST_RING_NPAGES (sizeof(ring_buffer) / PAGE_SIZE)
 
-static int probe_for_argo(void)
+static int probe_for_argo(domid_t own_domid)
 {
+    int rc;
+
     /* Attempt an Argo call to register a ring with invalid arguments */
-    int rc = hypercall_argo_op(XEN_ARGO_OP_register_ring, NULL, NULL,
-                               XEN_ARGO_MAX_RING_SIZE + 1, /* never allowed */
-                               0);
+    xen_argo_register_ring_t reg = {
+        .aport      = 1,
+        .partner_id = own_domid,
+        .len        = 1, /* A 1-byte ring is never allowed */
+    };
+
+    rc = hypercall_argo_op(XEN_ARGO_OP_register_ring, &reg, NULL, 0, 0);
     switch ( rc )
     {
     case -EINVAL: /* this is the response we are looking for */
@@ -305,13 +311,13 @@ void test_main(void)
     const char simple_text[] = "a simple thing to send\n";
     const unsigned int msg_type = 0x12345678;
 
-    /* First test validates for Argo availability to gate further testing */
-    if ( probe_for_argo() )
-        return;
-
     own_domid = xtf_get_domid();
     if ( own_domid < 0 )
         return xtf_error("Error: could not determine domid of the test domain\n");
+
+    /* First test validates for Argo availability to gate further testing */
+    if ( probe_for_argo(own_domid) )
+        return;
 
     if ( test_notify_for_one_ring(own_domid, test_aport, false) ||
          test_unregister_ring(own_domid, test_aport, false) )
