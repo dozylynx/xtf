@@ -1,87 +1,51 @@
-#include <arch/page.h>
-#include <xtf/asm_macros.h>
-#include <xen/xen.h>
+        .section ".text.head", "ax", %progbits
 
-/* 1 if BE, 0 if LE */
-#define HEAD_FLAG_ENDIANNESS  0
-#define HEAD_FLAG_PAGE_SIZE   ((PAGE_SHIFT - 10) / 2)
-#define HEAD_FLAG_PHYS_BASE   1
-#define HEAD_FLAGS            ((HEAD_FLAG_ENDIANNESS << 0) | \
-                              (HEAD_FLAG_PAGE_SIZE << 1) |   \
-                              (HEAD_FLAG_PHYS_BASE << 3))
+#define ZIMAGE64_MAGIC                  0x644d5241
 
-/*
- * Print a string on the debug console
- *
- * Clobbers: x0, x1, x2, w3, x16
- */
-#define PRINT(s)                                    \
-    adr     x2, 98f;                                \
-    mov     x1, #0;                                 \
-1:  ldrb    w3, [x2, x1];                           \
-    add     x1, x1, #1;                             \
-    cbnz    w3, 1b;                                 \
-    mov     x0, #CONSOLEIO_write;                   \
-    mov     x16, #__HYPERVISOR_console_io;          \
-    hvc     #XEN_HYPERCALL_TAG;                     \
-.pushsection .rodata.str, "aMS", %progbits, 1;      \
-98: .asciz  s;                                      \
-.popsection
+#define ZIMAGE64_FLAGS_LE               (0 << 0)
+#define ZIMAGE64_FLAGS_PG_UNK           (0 << 1)
+#define ZIMAGE64_FLAGS_PHYS_ANY         (1 << 3)
 
-.section ".bss.page_aligned"
-.p2align PAGE_SHIFT
+#define ZIMAGE64_FLAGS \
+        (ZIMAGE64_FLAGS_LE | ZIMAGE64_FLAGS_PG_UNK | ZIMAGE64_FLAGS_PHYS_ANY)
 
-.text
-    b       _start                  /* branch to kernel start, magic */
-    .long   0                       /* Executable code */
-    .quad   0x0                     /* Image load offset from start of RAM */
-    .quad   _end - _start           /* Effective Image size */
-    .quad   HEAD_FLAGS              /* Informative flags, little-endian */
-    .quad   0                       /* reserved */
-    .quad   0                       /* reserved */
-    .quad   0                       /* reserved */
-    .byte   0x41                    /* Magic number, "ARM\x64" */
-    .byte   0x52
-    .byte   0x4d
-    .byte   0x64
-    .long   0                       /* reserved */
+        /*
+         * zImage64 header:
+         *   See https://www.kernel.org/doc/html/latest/arm64/booting.html
+         */
+.globl _start
+_start:
+        b       startup                 /* code0 */
+        nop                             /* code1 */
+        .quad   0                       /* text_offset:  0 -> relocatable */
+        .quad   _end - _start           /* size */
+        .quad   ZIMAGE64_FLAGS          /* flags */
+        .quad   0                       /* reserved */
+        .quad   0                       /* reserved */
+        .quad   0                       /* reserved */
+        .long   ZIMAGE64_MAGIC          /* magic */
+        .long   0                       /* reserved */
 
+startup:
+        /* Calculate x21 = phys-offset */
+        ldr     x22, =_start
+        adr     x21, _start
+        sub     x21, x21, x22
 
-/* Load a physical address of \sym to \xb */
-.macro load_paddr xb, sym
-    ldr \xb, =\sym
-    add \xb, \xb, x21
-.endm
+        /* sp = &stack[4096] + phys-offset */
+        ldr     x0, =stack + 4096
+        add     sp, x0, x22
+
+        bl      test_main
+
+1:      b       1b
+
+        .type   startup, %function
+        .size   startup, . - startup
 
 /*
- * Common register usage for assembly boot code
- *
- * x20 - DTB physical address (boot CPU only)
- * x21 - Offset between PA and VA ( PA - VA)
- * x30 - lr
+ * Local variables:
+ * tab-width: 8
+ * indent-tabs-mode: nil
+ * End:
  */
-ENTRY(_start)
-    /* Save DTB pointer */
-    mov     x20, x0
-
-    /* Calculate where we are */
-    ldr     x22, =_start        /* x22 := vaddr(_start) */
-    adr     x21, _start         /* x21 := paddr(_start) */
-    sub     x21, x21, x22       /* x21 := phys-offset */
-
-    PRINT("- XTF booting -\n")
-
-    PRINT("- Zero BSS -\n")
-
-    load_paddr  x0, __start_bss
-    load_paddr  x1, __end_bss
-
-    bl      flush_dcache_range
-1:  str     xzr, [x0], #8
-    cmp     x0, x1
-    b.lo    1b
-    bl      flush_dcache_range
-
-    /* Start an infinite loop */
-    PRINT("- Infinite loop -\n")
-1:  b   1b

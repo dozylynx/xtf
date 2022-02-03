@@ -13,9 +13,9 @@ ENTRY(_start)
 SECTIONS
 {
     . = XTF_VIRT_START;
-    _text = .;
 
     .text : {
+        *(.text.head)
         *(.text)
     }
 
