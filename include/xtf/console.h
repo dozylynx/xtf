@@ -16,6 +16,9 @@ typedef void (*cons_output_cb)(const char *buf, size_t len);
  */
 void register_console_callback(cons_output_cb cb);
 
+/* Callback for writing to the Xen hypervisor console */
+void xen_console_write(const char *buf, size_t len);
+
 /*
  * Initialise the PV console.  Will register a callback.
  */

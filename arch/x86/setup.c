@@ -238,11 +238,6 @@ static void qemu_console_write(const char *buf, size_t len)
                  : "d" (0x12));
 }
 
-static void xen_console_write(const char *buf, size_t len)
-{
-    hypercall_console_write(buf, len);
-}
-
 void arch_setup(void)
 {
     if ( IS_DEFINED(CONFIG_HVM) && !pvh_start_info )
