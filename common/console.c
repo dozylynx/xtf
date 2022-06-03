@@ -29,6 +29,11 @@ void register_console_callback(cons_output_cb fn)
         panic("Too many console callbacks\n");
 }
 
+void xen_console_write(const char *buf, size_t len)
+{
+    hypercall_console_write(buf, len);
+}
+
 /*
  * Write some data into the pv ring, taking care not to overflow the ring.
  */
