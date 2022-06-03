@@ -42,9 +42,20 @@ startup:
         ldr     sp, =stack + 4096
         add     sp, sp, r9
 
-        bl      test_main
+        /* zero bss */
+        ldr     r1, =__start_bss
+        add     r1, r1, r9
+        ldr     r2, =__end_bss
+        add     r2, r2, r9
+        mov     r0, #0
+1:      str     r0, [r1]
+        add     r1, r1, #4
+        cmp     r1, r2
+        blt     1b
 
-1:      b       1b
+        bl      xtf_main
+
+2:      b       2b
 
         .type   startup, %function
         .size   startup, . - startup
