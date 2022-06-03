@@ -49,7 +49,9 @@ all_categories         = default_categories | non_default_categories
 # All test environments
 pv_environments        = set(("pv64", "pv32pae"))
 hvm_environments       = set(("hvm64", "hvm32pae", "hvm32pse", "hvm32"))
-all_environments       = pv_environments | hvm_environments
+arm_environments       = set(("arm32",))
+x86_environments       = pv_environments | hvm_environments
+all_environments       = x86_environments | arm_environments
 
 
 class RunnerError(Exception):
@@ -416,6 +418,8 @@ def interpret_selection(opts):
                 host_envs.append("pv64")
             if "xen-3.0-x86_32p" in caps:
                 host_envs.append("pv32pae")
+            if "xen-3.0-armv7l" in caps:
+                host_envs.append("arm32")
             for cap in caps:
                 if cap.startswith("hvm"):
                     host_envs.extend(hvm_environments)
