@@ -3,12 +3,14 @@
  *
  * Early bringup code for arm.
  */
+#include <xtf/console.h>
 #include <xtf/lib.h>
 
 const char environment_description[] = ENVIRONMENT_DESCRIPTION;
 
 void arch_setup(void)
 {
+    register_console_callback(xen_console_write);
 }
 
 void test_setup(void)
