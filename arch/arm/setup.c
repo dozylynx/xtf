@@ -3,6 +3,7 @@
  *
  * Early bringup code for arm.
  */
+#include <xtf/compiler.h>
 #include <xtf/console.h>
 #include <xtf/hypercall.h>
 #include <xtf/lib.h>
@@ -13,6 +14,24 @@
 char __attribute__((section(".bss.page_aligned"))) stack[4096];
 
 const char environment_description[] = ENVIRONMENT_DESCRIPTION;
+
+shared_info_t shared_info __page_aligned_bss;
+
+static void map_shared_info(void)
+{
+    int rc;
+    struct xen_add_to_physmap xatp =
+        {
+            .domid = DOMID_SELF,
+            .space = XENMAPSPACE_shared_info,
+            .idx = 0,
+            .gfn = virt_to_pfn(&shared_info),
+        };
+
+    rc = hypercall_memory_op(XENMEM_add_to_physmap, &xatp);
+    if ( rc )
+        panic("Failed to map shared_info: %d\n", rc);
+}
 
 static void setup_pv_console(void)
 {
@@ -55,6 +74,7 @@ void arch_setup(void)
 {
     register_console_callback(xen_console_write);
     setup_pv_console();
+    map_shared_info();
     setup_xenbus();
 }
 

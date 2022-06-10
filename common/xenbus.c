@@ -103,6 +103,7 @@ static void xenbus_read(void *data, size_t len)
 
         len -= part;
         done += part;
+
     }
 }
 
