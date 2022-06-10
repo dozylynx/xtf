@@ -12,7 +12,7 @@ const char test_title[] = "Hello arm" COND("32", "64") "\n";
 
 char __attribute__((section(".bss.page_aligned"))) stack[4096];
 
-void test_main(void)
+void xtf_main(void)
 {
 #if defined(__arm__) || defined(__aarch64__)
     register unsigned long nr asm (COND("r12", "x16"));
