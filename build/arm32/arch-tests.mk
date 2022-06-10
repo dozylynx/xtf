@@ -2,3 +2,4 @@
 
 TESTS := $(ROOT)/tests/stub
 TESTS += $(ROOT)/tests/example
+TESTS += $(ROOT)/tests/foo
