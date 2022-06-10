@@ -10,6 +10,8 @@
 
 #include <arch/mm.h>
 
+char __attribute__((section(".bss.page_aligned"))) stack[4096];
+
 const char environment_description[] = ENVIRONMENT_DESCRIPTION;
 
 static void setup_pv_console(void)
