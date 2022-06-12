@@ -1,5 +1,6 @@
 #include <xtf/atomic.h>
 #include <xtf/bitops.h>
+#include <xtf/console.h>
 #include <xtf/hypercall.h>
 #include <xtf/lib.h>
 #include <xtf/traps.h>
@@ -81,10 +82,15 @@ static void xenbus_read(void *data, size_t len)
         if ( !part )
         {
             hypercall_evtchn_send(xb_port);
+            printk("xenbus_read 1\n");
 
             if ( !test_and_clear_bit(xb_port, shared_info.evtchn_pending) )
+            {
+                printk("xenbus_read 2\n");
                 hypercall_poll(xb_port);
+            }
 
+            printk("xenbus_read 3\n");
             continue;
         }
 
@@ -119,22 +125,32 @@ const char *xenstore_read(const char *path)
         .type = XS_READ,
         .len = strlen(path) + 1, /* Must send the NUL terminator. */
     };
+    printk("xenstore_read 1\n");
 
     /* Write the header and path to read. */
     xenbus_write(&hdr, sizeof(hdr));
     xenbus_write(path, hdr.len);
 
+    printk("xenstore_read 2\n");
+
     /* Kick xenstored. */
     hypercall_evtchn_send(xb_port);
+
+    printk("xenstore_read 3\n");
 
     /* Read the response header. */
     xenbus_read(&hdr, sizeof(hdr));
 
+    printk("xenstore_read 4\n");
+
     if ( hdr.type != XS_READ )
         return NULL;
 
+    printk("xenstore_read 5\n");
+
     if ( hdr.len > XENSTORE_PAYLOAD_MAX )
     {
+        printk("xenstore_read 6\n");
         /*
          * Xenstored handed back too much data.  Drain it safely attempt to
          * prevent the protocol from stalling.
@@ -143,20 +159,28 @@ const char *xenstore_read(const char *path)
         {
             unsigned int part = min(hdr.len, XENSTORE_PAYLOAD_MAX + 0u);
 
+            printk("xenstore_read 7\n");
             xenbus_read(payload, part);
+            printk("xenstore_read 8\n");
 
             hdr.len -= part;
         }
 
+        printk("xenstore_read 9\n");
         return NULL;
     }
+
+    printk("xenstore_read 10\n");
 
     /* Read the response payload. */
     xenbus_read(payload, hdr.len);
 
+    printk("xenstore_read 11\n");
+
     /* Safely terminate the reply, just in case xenstored didn't. */
     payload[hdr.len] = '\0';
 
+    printk("xenstore_read 12\n");
     return payload;
 }
 
