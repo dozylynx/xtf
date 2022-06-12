@@ -69,6 +69,10 @@ static inline bool test_and_clear_bit(unsigned int bit, volatile void *addr)
     register unsigned long *p = (unsigned long *)addr;
 
     printk("test_and_clear_bit\n");
+    if ( (*p) & mask )
+        printk("witnessed set bit\n");
+    else
+        printk("witnessed clear bit\n");
 
     asm volatile (
         "1:\n"
@@ -87,6 +91,11 @@ static inline bool test_and_clear_bit(unsigned int bit, volatile void *addr)
         printk("test_and_clear_bit exit: true\n");
     else
         printk("test_and_clear_bit exit: false\n");
+
+    if ( (*p) & mask )
+        printk("check: set bit\n");
+    else
+        printk("check: clear bit\n");
 
     return oldval & mask;
 }
