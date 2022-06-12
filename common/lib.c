@@ -51,7 +51,9 @@ int xtf_get_domid(void)
     if ( rc )
         return -1;
 
+    printk("xtf_get_domid pre xenstore_read\n");
     const char *str = xenstore_read("domid");
+    printk("xtf_get_domid post xenstore_read\n");
     unsigned int domid = 0;
 
     if ( !str || !isdigit(*str) )
@@ -66,6 +68,7 @@ int xtf_get_domid(void)
     if ( domid >= DOMID_FIRST_RESERVED )
         return -1;
 
+    printk("xtf_get_domid returning domid\n");
     return domid;
 }
 

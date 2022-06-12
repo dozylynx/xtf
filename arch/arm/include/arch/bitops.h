@@ -6,6 +6,7 @@
 #ifndef XTF_ARM_BITOPS_H
 #define XTF_ARM_BITOPS_H
 
+#include <xtf/console.h>
 #include <xtf/lib.h>
 
 static inline bool test_bit(unsigned int bit, const void *addr)
@@ -67,6 +68,8 @@ static inline bool test_and_clear_bit(unsigned int bit, volatile void *addr)
     register unsigned long mask = (1 << bit);
     register unsigned long *p = (unsigned long *)addr;
 
+    printk("test_and_clear_bit\n");
+
     asm volatile (
         "1:\n"
         "dmb ish\n"
@@ -79,6 +82,11 @@ static inline bool test_and_clear_bit(unsigned int bit, volatile void *addr)
         : "=&r" (val), "=&r" (oldval), "+m" (*p), "=&r" (ok)
         : "r" (p), "r" (mask)
         : "memory");
+
+    if (oldval & mask)
+        printk("test_and_clear_bit exit: true\n");
+    else
+        printk("test_and_clear_bit exit: false\n");
 
     return oldval & mask;
 }
