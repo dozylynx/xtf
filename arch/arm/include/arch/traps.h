@@ -9,6 +9,8 @@
 
 void __noreturn arch_crash_hard(void);
 
+void do_exception(void);
+
 #endif /* XTF_ARM_TRAPS_H */
 
 /*
