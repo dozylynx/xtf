@@ -44,7 +44,9 @@ startup:
 
         /* zero bss */
         ldr     r1, =__start_bss
+        add     r1, r1, r9
         ldr     r2, =__end_bss
+        add     r2, r2, r9
         mov     r0, #0
 1:      str     r0, [r1]
         add     r1, r1, #4
