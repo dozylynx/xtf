@@ -48,10 +48,10 @@ exception_handler irq             ARM32_VECTOR_IRQ
 exception_handler fiq             ARM32_VECTOR_FIQ
 
 ENTRY(init_exception_vector)
-/* initialize exception handling: Vector Base Address Register */
-ldr     r8, =vector_table
-mcr     15, 0, r8, c12, c0
-mov     pc, lr
+        /* initialize exception handling: Vector Base Address Register */
+        ldr     r8, =vector_table
+        mcr     15, 0, r8, c12, c0
+        mov     pc, lr
 ENDFUNC(init_exception_vector)
 
 /*
