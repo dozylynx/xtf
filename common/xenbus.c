@@ -84,6 +84,11 @@ static void xenbus_read(void *data, size_t len)
             hypercall_evtchn_send(xb_port);
             printk("xenbus_read 1\n");
 
+            if ( test_bit(xb_port, shared_info.evtchn_mask) )
+                printk("xenbus port is MASKED\n");
+            else
+                printk("xenbus port is unmasked\n");
+
             if ( !test_and_clear_bit(xb_port, shared_info.evtchn_pending) )
             {
                 printk("xenbus_read 2\n");
