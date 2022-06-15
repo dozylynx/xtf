@@ -63,6 +63,36 @@ static void xenbus_write(const void *data, size_t len)
     }
 }
 
+static void dump_port(evtchn_port_t port)
+{
+    evtchn_port_t i;
+
+    /* print a number backwards */
+    printk("REVERSE: ");
+
+    i = port % 10;
+
+    do {
+        port = port / 10;
+
+        switch (i) {
+            case 0: printk("0"); break;
+            case 1: printk("1"); break;
+            case 2: printk("2"); break;
+            case 3: printk("3"); break;
+            case 4: printk("4"); break;
+            case 5: printk("5"); break;
+            case 6: printk("6"); break;
+            case 7: printk("7"); break;
+            case 8: printk("8"); break;
+            case 9: printk("9"); break;
+        };
+        i = port % 10;
+    } while ( port != 0 );
+
+    printk("\n");
+}
+
 /*
  * Read some raw data from the xenbus ring.  Waits for sufficient data to
  * appear if necessary.
@@ -88,6 +118,8 @@ static void xenbus_read(void *data, size_t len)
                 printk("xenbus port is MASKED\n");
             else
                 printk("xenbus port is unmasked\n");
+
+            dump_port(xb_port);
 
             if ( !test_and_clear_bit(xb_port, shared_info.evtchn_pending) )
             {
