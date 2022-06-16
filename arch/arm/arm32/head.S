@@ -54,6 +54,7 @@ startup:
         blt     1b
 
         bl      init_exception_vector
+        bl      init_paging
 
         /* transition to XTF C */
         bl      xtf_main
