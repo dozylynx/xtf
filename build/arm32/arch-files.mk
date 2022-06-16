@@ -6,3 +6,4 @@ include $(ROOT)/build/arm-common/arch-files.mk
 # Specific files for arm32
 obj-perenv += $(ROOT)/arch/arm/arm32/head.o
 obj-perenv += $(ROOT)/arch/arm/arm32/exception.o
+obj-perenv += $(ROOT)/arch/arm/arm32/paging.o

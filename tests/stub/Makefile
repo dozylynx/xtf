@@ -4,6 +4,6 @@ NAME      := stub
 CATEGORY  := special
 TEST-ENVS := $(ALL_ENVIRONMENTS)
 
-obj-perenv := $(ROOT)/arch/arm/$(ARCH)/head.o exception.o main.o
+obj-perenv := $(ROOT)/arch/arm/$(ARCH)/head.o exception.o paging.o main.o
 
 include $(ROOT)/build/gen.mk
