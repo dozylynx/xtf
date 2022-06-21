@@ -146,6 +146,10 @@ ENDFUNC(setup_page_tables)
 
 /* TODO: describe registers clobbered here */
 ENTRY(init_paging)
+
+        /* TODO: just return here as this is not fully implemented */
+        mov     pc, lr
+
         /*-----------------------------------------------------------*/
         # SCTLR:
         # When using the short format descriptors:
