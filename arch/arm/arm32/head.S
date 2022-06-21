@@ -53,8 +53,8 @@ startup:
         cmp     r1, r2
         blt     1b
 
-        bl      init_exception_vector
         bl      init_paging
+        bl      init_exception_vector
 
         /* transition to XTF C */
         bl      xtf_main
