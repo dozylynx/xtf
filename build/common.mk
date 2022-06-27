@@ -19,7 +19,7 @@ COMMON_CFLAGS += -I$(ARCH_PATH)/include
 COMMON_AFLAGS += -I$(ARCH_PATH)/include
 COMMON_CFLAGS += -Wall -Wextra -Werror -std=gnu99 -Wstrict-prototypes -O3 -g
 COMMON_CFLAGS += -fno-common -fno-asynchronous-unwind-tables -fno-strict-aliasing
-COMMON_CFLAGS += -fno-stack-protector -fno-pic -ffreestanding -nostdinc
+COMMON_CFLAGS += -fno-stack-protector -ffreestanding -nostdinc
 COMMON_CFLAGS += -Wno-unused-parameter -Winline
 
 # Default guest configfiles

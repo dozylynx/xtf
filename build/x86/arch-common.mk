@@ -16,7 +16,7 @@ $(foreach env,$(HVM_ENVIRONMENTS),$(eval $(env)_guest := hvm))
 $(foreach env,$(32BIT_ENVIRONMENTS),$(eval $(env)_arch := x86_32))
 $(foreach env,$(64BIT_ENVIRONMENTS),$(eval $(env)_arch := x86_64))
 
-COMMON_CFLAGS += -mno-red-zone -mno-sse
+COMMON_CFLAGS += -mno-red-zone -mno-sse -fno-pic
 
 COMMON_AFLAGS-x86_32 := -m32
 COMMON_AFLAGS-x86_64 := -m64

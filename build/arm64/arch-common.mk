@@ -7,7 +7,7 @@ arm64_arch   := arm64
 arm64_guest  := arm64
 defcfg-arm64 := $(ROOT)/config/default-arm.cfg.in
 
-COMMON_CFLAGS += -march=armv8-a
+COMMON_CFLAGS += -march=armv8-a -fpie
 
 # Include arm common makefile
 include $(ROOT)/build/arm-common/arch-common.mk
