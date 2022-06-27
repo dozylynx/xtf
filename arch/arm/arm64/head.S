@@ -34,7 +34,7 @@ startup:
 
         /* sp = &stack[4096] + phys-offset */
         ldr     x0, =stack + 4096
-        add     sp, x0, x22
+        add     sp, x0, x21
 
         bl      test_main
 
